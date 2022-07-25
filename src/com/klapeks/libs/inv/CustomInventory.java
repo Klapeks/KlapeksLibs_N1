@@ -87,7 +87,7 @@ public class CustomInventory {
 				int len = ChatColor.stripColor(t).length()*2;
 				for (String s : t.split("")) if (LITTLE_LETTERS.contains(s)) len--;
 				if (len < TITLE_LENGTH*2) {
-					t = " ".repeat((int) ((TITLE_LENGTH*2-len)*0.3625)) + t;
+					t = Messaging.repeat(" ", ((int) ((TITLE_LENGTH*2-len)*0.3625))) + t;
 				}
 			}
 			inv = Bukkit.createInventory(null, maxSlots, "§r" + t);

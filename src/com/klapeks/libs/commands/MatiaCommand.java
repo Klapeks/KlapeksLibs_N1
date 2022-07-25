@@ -1,5 +1,6 @@
 package com.klapeks.libs.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.command.CommandSender;
@@ -12,7 +13,7 @@ import com.klapeks.libs.nms.NMS;
 
 public abstract class MatiaCommand {
 	
-	protected static List<String> players = List.of("@@@@@@@@@@players@@@@@@@@@@@@@@");
+	protected static List<String> players = (List<String>)ImmutableList.<String>of("@@@@@@@@@@players@@@@@@@@@@@@@@");
 	
 	
 	private final BukkitCommand bukkit;
@@ -32,8 +33,7 @@ public abstract class MatiaCommand {
 			}
 			@Override
 			public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-				if (sender instanceof ConsoleCommandSender) return onTab((Player) sender, args);
-				if (!(sender instanceof Player)) return (List<String>)ImmutableList.<String>of();
+				if (!(sender instanceof Player)) return onTab(sender, args);
 				List<String> list = MatiaCommand.this.onTab((Player) sender, args);
 				if (list==null) list = (List<String>)ImmutableList.<String>of();
 				else if (list==players) return super.tabComplete(sender, alias, args);
@@ -46,15 +46,15 @@ public abstract class MatiaCommand {
 	public abstract void onCommand(Player p, String[] args);
 	public abstract List<String> onTab(Player p, String[] args);
 
-	public List<String> onTab(ConsoleCommandSender ccs, String[] args) {
+	public List<String> onTab(CommandSender ccs, String[] args) {
 		return (List<String>)ImmutableList.<String>of();
 	}
-	public void onConsole(ConsoleCommandSender ccs, String[] args) {
+	public void onConsole(CommandSender ccs, String[] args) {
 		ccs.sendMessage("§cSorry. This command only for players");
 	}
 	
 	public List<String> getAlias() {
-		return List.of();
+		return new ArrayList<>();
 	}
 	public String noPermissions() {
 		return "§cYou don't have perms";

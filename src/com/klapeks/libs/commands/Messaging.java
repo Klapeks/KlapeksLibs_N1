@@ -2,6 +2,8 @@ package com.klapeks.libs.commands;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -11,7 +13,7 @@ import org.bukkit.entity.Player;
 public class Messaging {
 	static FileConfiguration cfg;
 	static {
-		File file = new File("plugins/KlapeksLib/lang.yml");
+		File file = new File("plugins/KlapeksLibs/lang.yml");
 		if (!file.exists()) {
 			file.getParentFile().mkdirs();
 			try {
@@ -39,22 +41,22 @@ public class Messaging {
 		p.sendMessage(format(p, msg));
 	}
 	public static String msg(String msg) {
-		if (cfg.contains(msg)) msg = cfg.getString(msg);
+		if (msg.contains("&") || msg.contains("§")) {}
+		else if (cfg.contains(msg)) msg = cfg.getString(msg);
 		msg = msg.replace("&", "§");
-		if (msg.contains("§#")) {
-			String[] aa = msg.split("§#");
-			StringBuilder sb = new StringBuilder();
-			sb.append(aa[0]);
-			for (int i = 1; i<aa.length;i++) {
-				if (aa[i].length()<6) {
-					sb.append("#");
-					sb.append(aa[i]);
-					continue;
-				}
-				sb.append(toColor(aa[i].substring(0, 6), aa[i].substring(6)));
+		if (!msg.contains("§#")) return msg;
+		String[] aa = msg.split("§#");
+		StringBuilder sb = new StringBuilder();
+		sb.append(aa[0]);
+		for (int i = 1; i<aa.length;i++) {
+			if (aa[i].length()<6) {
+				sb.append("#");
+				sb.append(aa[i]);
+				continue;
 			}
-			msg = sb.toString();
+			sb.append(toColor(aa[i].substring(0, 6), aa[i].substring(6)));
 		}
+		msg = sb.toString();
 		return msg;
 	}
 	public static String format(Player p, String msg) {
@@ -70,5 +72,20 @@ public class Messaging {
 		}
 		sb.append(msg);
 		return sb.toString();
+	}
+	
+	public static String repeat(String str, int times) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < times; i++) {
+			sb.append(str);
+		}
+		return sb.toString();
+	}
+	public static <T> List<T> listOf(T... str){
+		List<T> list = new ArrayList<>();
+		for (int i = 0; i < str.length; i++) {
+			list.add(str[i]);
+		}
+		return list;
 	}
 }

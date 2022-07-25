@@ -15,9 +15,9 @@ import com.klapeks.libs.nms.NMS;
 
 public class Main extends JavaPlugin implements Listener {
 	
-	static Main plugin;
+	public static Main plugin;
 	public Main() {
-		this.plugin = this;
+		plugin = this;
 	}
 	@Override
 	public void onEnable() {

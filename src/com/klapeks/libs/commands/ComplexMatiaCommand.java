@@ -1,5 +1,6 @@
 package com.klapeks.libs.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -22,7 +23,7 @@ public class ComplexMatiaCommand extends SubCommand {
 			this.name = this.name.substring(cmd.length()+1);
 		} else cmd = "klapeks";
 		
-		bukkit = new BukkitCommand(this.name, getDescription(), getUsage(), List.of()) {
+		bukkit = new BukkitCommand(this.name, getDescription(), getUsage(), new ArrayList<>()) {
 			@Override
 			public boolean execute(CommandSender sender, String alias, String[] args) {
 				if (!(sender instanceof Player)) {
