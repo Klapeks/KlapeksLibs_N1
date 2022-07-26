@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.klapeks.db.Cfg;
 
-public class Where {
+public class Where implements Cloneable {
 
 	String query;
 	Object[] placeholders;
@@ -30,5 +30,12 @@ public class Where {
 	}
 	public void setLimit(int limit) {
 		this.limit = limit;
+	}
+	
+	@Override
+	public Where clone() {
+		Where wh = new Where(this.query, this.placeholders.clone());
+		wh.limit = this.limit;
+		return wh;
 	}
 }

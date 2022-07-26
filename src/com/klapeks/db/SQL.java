@@ -6,12 +6,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.klapeks.sql.KlapeksSQL;
+import com.klapeks.sql.Database;
+import com.klapeks.sql.MatSQL;
 import com.klapeks.sql.Where;
 
 public class SQL {
 	
-	static KlapeksSQL sql;
+	static Database sql;
 	
 	static String type;
 	public static String getType() {
@@ -21,12 +22,12 @@ public class SQL {
 		return true;
 	}
 	
-	public static KlapeksSQL sql() {
+	public static Database sql() {
 		if (sql==null) connect();
 		return sql;
 	}
 	public static Where where(String query, Object... placeholders) {
-		return sql().where(query, placeholders);
+		return new Where(query, placeholders);
 	}
 //	public static PreparedStatement sql(String sql, Object... args) throws SQLException {
 //		 PreparedStatement statement = sql().prepareStatement(sql);
@@ -64,7 +65,7 @@ public class SQL {
 		url += cfg.get("host") + ":" + cfg.get("port")+"/";
 		url += cfg.get("name");
 		Bukkit.getLogger().info("Trying to connect to database with url " + url);
-		sql = new KlapeksSQL();
+		sql = new MatSQL();
 		sql.connect(url, cfg.getString("username"), cfg.getString("password"));
 	}
 	public static void disconnect() {
