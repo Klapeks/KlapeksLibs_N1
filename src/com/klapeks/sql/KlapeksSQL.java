@@ -19,35 +19,6 @@ import com.klapeks.sql.anno.Table;
 
 public class KlapeksSQL {
 	
-//	public static void main(String[] args) {
-//		try {
-//			Class.forName("com.mysql.jdbc.Driver");
-//		} catch (ClassNotFoundException e) {
-//			System.err.println("Can't find MySQL Driver");
-//			throw new RuntimeException(e);
-//		}
-//		
-//		KlapeksSQL db = new KlapeksSQL();
-//		db.connect("jdbc:mysql://localhost:3306/klapekstestweb", "root", "root");
-//		db.createIfNotExists(TitlePlayer.class);
-//		
-//		TitlePlayer tp = new TitlePlayer();
-//		tp.player = "vladek";
-//		tp.category = "test";
-//		tp.titles = new ArrayList<>();
-//		tp.titles.add("sussye22");
-//		tp.titles.add("errra44");
-//		tp.titles.add("eeee");
-//		tp.newtime = 68;
-//		
-//		db.updateOrInsert(tp);
-////		TitlePlayer tp = db.selectFirst(TitlePlayer.class, db.where("`player` = ?", "skepalk"));
-////		System.out.println(tp.player);
-////		System.out.println(tp.category);
-////		System.out.println(tp.titles);
-////		System.out.println(tp.newtime);
-//	}
-	
 	public Where where(String query, Object... placeholders) {
 		return new Where(query, placeholders);
 	}
@@ -69,7 +40,6 @@ public class KlapeksSQL {
 			query.append(where.limit);
 		}
 		try {
-			System.out.println(query.toString());
 			PreparedStatement st = connection.prepareStatement(query.toString());
 			int index = 0;
 			for (Object o : where.placeholders) {
@@ -108,10 +78,10 @@ public class KlapeksSQL {
 		} catch (Throwable e) {
 			throw new RuntimeException(e);
 		}
-//		System.out.println(result.getObject("player"));
-//		System.out.println(result.getObject("category"));
-//		System.out.println(result.getObject("titles"));
-//		System.out.println();
+//		System.oute.println(result.getObject("player"));
+//		System.oute.println(result.getObject("category"));
+//		System.oute.println(result.getObject("titles"));
+//		System.oute.println();
 //		return null;
 	}
 	public void updateOrInsert(Object object, Where where) {
@@ -119,11 +89,9 @@ public class KlapeksSQL {
 		if (table==null) throw new RuntimeException(object.getClass() + " is not Table");
 		where.setLimit(1);
 		if (selectFirst(object.getClass(), where)==null) {
-			System.out.println("-Insert");
 			insert(object);
 			return;
 		}
-		System.out.println("-Update");
 		update(object);
 	}
 	public int update(Object object, Where where) {
@@ -156,7 +124,6 @@ public class KlapeksSQL {
 		for (Object o : where.placeholders) {
 			placeholders.add(o);
 		}
-		System.out.println(query);
 		try {
 			PreparedStatement st = connection.prepareStatement(query.toString());
 			index = 0;
@@ -225,7 +192,6 @@ public class KlapeksSQL {
 			query.append("?");
 		}
 		query.append(" );");
-		System.out.println(query);
 		try {
 			PreparedStatement st = connection.prepareStatement(query.toString());
 			index = 0;
@@ -240,7 +206,6 @@ public class KlapeksSQL {
 					e.printStackTrace();
 				}
 			}
-			System.out.println(st);
 			return st.executeUpdate();
 //			return 0;
 		} catch (SQLException e) {
@@ -290,7 +255,6 @@ public class KlapeksSQL {
 			query.append(" NOT NULL");
 		}
 		query.append(" );");
-		System.out.println(query);
 		try {
 			this.connection.prepareStatement(query.toString()).executeUpdate();
 		} catch (SQLException e) {
@@ -319,7 +283,6 @@ public class KlapeksSQL {
 				query.append("`");
 			}
 			query.append(" );");
-			System.out.println(query);
 			try {
 				this.connection.prepareStatement(query.toString()).executeUpdate();
 			} catch (SQLException e) {
