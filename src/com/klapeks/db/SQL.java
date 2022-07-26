@@ -1,22 +1,17 @@
 package com.klapeks.db;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.Properties;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.klapeks.libs.Main;
+import com.klapeks.sql.KlapeksSQL;
+import com.klapeks.sql.Where;
 
 public class SQL {
 	
-	static Connection connection;
+	static KlapeksSQL sql;
 	
 	static String type;
 	public static String getType() {
@@ -26,18 +21,20 @@ public class SQL {
 		return true;
 	}
 	
-	public static Connection sql() {
-		if (connection==null) connect();
-		return connection;
+	public static KlapeksSQL sql() {
+		if (sql==null) connect();
+		return sql;
 	}
-
-	public static PreparedStatement sql(String sql, Object... args) throws SQLException {
-		 PreparedStatement statement = sql().prepareStatement(sql);
-		 for (int i = 0; i < args.length; i++) {
-			 statement.setObject(i+1, args[i]);
-		 }
-		 return statement;
+	public static Where where(String query, Object... placeholders) {
+		return sql().where(query, placeholders);
 	}
+//	public static PreparedStatement sql(String sql, Object... args) throws SQLException {
+//		 PreparedStatement statement = sql().prepareStatement(sql);
+//		 for (int i = 0; i < args.length; i++) {
+//			 statement.setObject(i+1, args[i]);
+//		 }
+//		 return statement;
+//	}
 	
 	public static void connect() {
 		disconnect();
@@ -64,27 +61,16 @@ public class SQL {
 			throw new RuntimeException("Unknown database type: " + type);
 		}
 		}
-		Properties properties = new Properties();
-		properties.setProperty("user", cfg.getString("username"));
-		properties.setProperty("password", cfg.getString("password"));
-		properties.setProperty("characterEncoding", "utf8");
 		url += cfg.get("host") + ":" + cfg.get("port")+"/";
 		url += cfg.get("name");
 		Bukkit.getLogger().info("Trying to connect to database with url " + url);
-		try {
-			connection = DriverManager.getConnection(url, properties);
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		sql = new KlapeksSQL();
+		sql.connect(url, cfg.getString("username"), cfg.getString("password"));
 	}
 	public static void disconnect() {
-		if (connection == null) return;
-		try {
-			connection.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		connection = null;
+		if (sql == null) return;
+		sql.disconnect();
+		sql = null;
 	}
 	
 }
