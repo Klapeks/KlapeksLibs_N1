@@ -1,6 +1,7 @@
 package com.klapeks.sql;
 
 import java.lang.reflect.Field;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -64,7 +65,6 @@ public abstract class Database {
 		}
 		return o;
 	}
-	
 	
 	static Table validTable(Object object) {
 		Class<?> clazz = object.getClass();

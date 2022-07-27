@@ -59,4 +59,12 @@ public class Cfg {
 		}
 		return list;
 	}
+	public static String join(String joining, Object... objs) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < objs.length; i++) {
+			if (i>0) sb.append(joining);
+			sb.append(objs[i]);
+		}
+		return sb.toString();
+	}
 }

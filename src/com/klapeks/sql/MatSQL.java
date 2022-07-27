@@ -239,9 +239,11 @@ public class MatSQL extends Database {
 			throw new RuntimeSQLException(e);
 		}
 	}
+	
+
 
 	@SuppressWarnings("unchecked")
-	private <T> T generateFromResultSet(Class<T> clazz, ResultSet result) {
+	static <T> T generateFromResultSet(Class<T> clazz, ResultSet result) {
 		try {
 			T t = clazz.getConstructor().newInstance();
 			for (Field field : clazz.getDeclaredFields()) {
