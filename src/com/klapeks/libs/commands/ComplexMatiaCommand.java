@@ -16,7 +16,7 @@ public class ComplexMatiaCommand extends SubCommand {
 	private final BukkitCommand bukkit;
 	String name;
 	public ComplexMatiaCommand(String cmd) {
-		super(cmd, (BiConsumer<Player, String[]>) null, 0);
+		super(cmd, (BiConsumer<CommandSender, String[]>) null, 0);
 		this.name = cmd;
 		if (cmd.contains(":")) {
 			cmd = cmd.split("\\:")[0];
@@ -26,21 +26,14 @@ public class ComplexMatiaCommand extends SubCommand {
 		bukkit = new BukkitCommand(this.name, getDescription(), getUsage(), new ArrayList<>()) {
 			@Override
 			public boolean execute(CommandSender sender, String alias, String[] args) {
-				if (!(sender instanceof Player)) {
-					sender.sendMessage("§cSorry, this command only for players");
-					return true;
-				}
-				Player p = (Player) sender;
-				if (!proccess(p, args)) {
-					p.sendMessage(getUsage());
+				if (!proccess(sender, args)) {
+					sender.sendMessage(getUsage());
 				}
 				return true;
 			}
 			@Override
 			public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-				if (!(sender instanceof Player)) return (List<String>)ImmutableList.<String>of();
-				Player p = (Player) sender;
-				List<String> list = tab(p, args);
+				List<String> list = tab(sender, args);
 				if (list==null) return (List<String>)ImmutableList.<String>of();
 				else if (list==MatiaCommand.players) {
 					return super.tabComplete(sender, alias, args);
@@ -51,10 +44,10 @@ public class ComplexMatiaCommand extends SubCommand {
 		NMS.server.registerCommand(cmd, bukkit);
 	}
 	
-	public void on(Consumer<Player> c) {
+	public void on(Consumer<CommandSender> c) {
 		on((p, args) -> c.accept(p));
 	}
-	public void on(BiConsumer<Player, String[]> c) {
+	public void on(BiConsumer<CommandSender, String[]> c) {
 		this.cmd = c;
 	}
 	

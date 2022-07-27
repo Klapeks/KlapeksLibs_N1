@@ -5,17 +5,19 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 
 public class SubCommand {
 	String name;
-	BiConsumer<Player, String[]> cmd;
+	BiConsumer<CommandSender, String[]> cmd;
 	final int deep;
 	
-	SubCommand(String sub, Consumer<Player> c, int deep) {
+	SubCommand(String sub, Consumer<CommandSender> c, int deep) {
 		this(sub, (p, args) -> c.accept(p), deep); 
 	}
-	SubCommand(String sub, BiConsumer<Player, String[]> c, int deep) {
+	SubCommand(String sub, BiConsumer<CommandSender, String[]> c, int deep) {
 		this.name = sub;
 		this.cmd = c;
 		this.deep = deep;
@@ -26,12 +28,12 @@ public class SubCommand {
 	}
 	
 	public SubCommand on(String sub) {
-		return on(sub, (BiConsumer<Player, String[]>) null);
+		return on(sub, (BiConsumer<CommandSender, String[]>) null);
 	}
 	
 	List<SubCommand> subs = null;
 	SubCommand argsCommand = null;
-	public SubCommand on(String sub, BiConsumer<Player, String[]> c) {
+	public SubCommand on(String sub, BiConsumer<CommandSender, String[]> c) {
 		if (argsCommand!=null) throw new RuntimeException("Can't add subcommand to subcommand with args");
 		if (sub.startsWith("<") && sub.endsWith(">")) {
 			argsCommand = new SubCommand(sub, c, deep+1);
@@ -42,21 +44,31 @@ public class SubCommand {
 		subs.add(sc);
 		return sc;
 	}
-	public SubCommand on(String sub, Consumer<Player> c) {
-		return on(sub, (p,args) -> c.accept(p));
+	public SubCommand on(String sub, Consumer<CommandSender> c) {
+		return on(sub, (s,args) -> c.accept(s));
 	}
 	public SubCommand on(String sub, String wrong) {
-		return on(sub, (p, args) -> p.sendMessage(wrong));
+		return on(sub, (s, args) -> s.sendMessage(wrong));
 	}
 
-	public SubCommand onArgument(BiConsumer<Player, String> c) {
-		return on("<arg>", (p, args) -> {
-			c.accept(p, args[deep]);
+	public SubCommand onArgument(BiConsumer<CommandSender, String> c) {
+		return on("<arg>", (s, args) -> {
+			c.accept(s, args[deep]);
 		});
 	}
-	public SubCommand onPlayer(BiConsumer<Player, String> c) {
-		return on("<player>", (p, args) -> {
-			c.accept(p, args[deep]);
+	public SubCommand onPlayer(BiConsumer<CommandSender, String> c) {
+		return on("<player>", (s, args) -> {
+			c.accept(s, args[deep]);
+		});
+	}
+	
+	public SubCommand onp(String sub, Consumer<Player> c) {
+		return onp(sub, (s,args) -> c.accept(s));
+	}
+	public SubCommand onp(String sub, BiConsumer<Player, String[]> c) {
+		return on(sub, (s,args) -> {
+			if (s instanceof Player) c.accept((Player)s, args);
+			else s.sendMessage("§cThis subcommand only for players");
 		});
 	}
 	protected boolean isWordAccepted(String word) {
@@ -70,16 +82,17 @@ public class SubCommand {
 		this.perms = perms;
 		return this;
 	}
-	public boolean hasPerms(Player p) {
+	public boolean hasPerms(CommandSender sender) {
+		if (sender instanceof ConsoleCommandSender) return true;
 		try {
-			if (p.isOp()) return true;
-			return p.hasPermission(perms);	
+			if (sender.isOp()) return true;
+			return sender.hasPermission(perms);	
 		} catch (Throwable t) {
 			return false;
 		}
 	}
-	protected List<String> tab(Player p, String[] args) {
-		if (!hasPerms(p)||name.equals("<endargs>")) {
+	protected List<String> tab(CommandSender sender, String[] args) {
+		if (!hasPerms(sender)||name.equals("<endargs>")) {
 			return null;
 		}
 		if (args==null||args.length-1==deep) {
@@ -87,37 +100,37 @@ public class SubCommand {
 				if (argsCommand.name.equals("<player>")) {
 					return MatiaCommand.players;
 				}
-				return argsCommand.tab(p, args);
+				return argsCommand.tab(sender, args);
 			}
 			if (subs==null) return null;
 			List<String> list = new ArrayList<>();
 			for (SubCommand s : subs) {
-				if (s.hasPerms(p)) {
+				if (s.hasPerms(sender)) {
 					list.add(s.name);
 				}
 			}
 			return list;
 		}
 		if (argsCommand!=null) {
-			return argsCommand.tab(p, args);
+			return argsCommand.tab(sender, args);
 		}
 		if (subs==null) return null;
 		for (SubCommand s : subs) {
 			if (s.isWordAccepted(args[deep])) {
-				return s.tab(p, args);
+				return s.tab(sender, args);
 			}
 		}
 		return null;
 	}
-	protected boolean proccess(Player p, String[] args) {
+	protected boolean proccess(CommandSender sender, String[] args) {
 		if (args==null||args.length==deep||name.equals("<endargs>")) {
 			if (cmd==null) return false;
-			cmd.accept(p, args);
+			cmd.accept(sender, args);
 			return true;
 		}
 		if (argsCommand!=null) {
 			if (argsCommand.isWordAccepted(args[deep])) {
-				return argsCommand.proccess(p, args);
+				return argsCommand.proccess(sender, args);
 			}
 		}
 		if (subs==null) {
@@ -125,7 +138,7 @@ public class SubCommand {
 		}
 		for (SubCommand s : subs) {
 			if (s.isWordAccepted(args[deep])) {
-				return s.proccess(p, args);
+				return s.proccess(sender, args);
 			}
 		}
 		return false;

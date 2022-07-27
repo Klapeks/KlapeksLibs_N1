@@ -255,6 +255,7 @@ public class MatSQL extends Database {
 					String[] g = o.toString().replace("\r", "").split("\n");
 					o = new ArrayList<Object>();
 					for (String s : g) {
+						if (s.isEmpty()) continue;
 						((List<Object>) o).add(s);
 					}
 				}

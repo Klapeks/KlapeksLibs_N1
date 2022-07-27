@@ -99,6 +99,7 @@ public class MatYML extends Database {
 		return list;
 	}
 	private <T> void parse(ConfigurationSection section, Class<T> clazz, List<T> addTo) {
+		if (section==null) return;
 		boolean b = false;
 		for (String key : section.getKeys(false)) {
 			if (!section.isConfigurationSection(key)) continue;
@@ -113,6 +114,7 @@ public class MatYML extends Database {
 	}
 
 	static <T> T generateFromSection(Class<T> clazz, ConfigurationSection section) {
+		if (section==null) return null;
 		try {
 			T t = clazz.getConstructor().newInstance();
 			for (Field field : clazz.getDeclaredFields()) {

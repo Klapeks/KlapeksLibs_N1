@@ -1,72 +1,93 @@
 package com.klapeks.libs.commands;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.ImmutableList;
+import com.klapeks.libs.exceptions.NoCatchException;
+import com.klapeks.libs.exceptions.NoPermsException;
 import com.klapeks.libs.nms.NMS;
 
 public abstract class MatiaCommand {
 	
-	protected static List<String> players = (List<String>)ImmutableList.<String>of("@@@@@@@@@@players@@@@@@@@@@@@@@");
+	protected static List<String> players = (List<String>)ImmutableList.<String>of("@@@@@@@@@@@@@@players@@@@@@@@@@@@@@");
 	
 	
 	private final BukkitCommand bukkit;
 	protected final String command;
-	public MatiaCommand(String cmd) {
+	public MatiaCommand(String cmd, String... alias) {
 		this.command = cmd.contains(":")?cmd.substring(cmd.indexOf(":")+1):cmd;
-		bukkit = new BukkitCommand(this.command, getDescription(), getUsage(), getAlias()) {
+		bukkit = new BukkitCommand(this.command, getDescription(), getHelpUsage(), Messaging.listOf(alias)) {
 			@Override
 			public boolean execute(CommandSender sender, String alias, String[] args) {
-				if (sender instanceof ConsoleCommandSender) {
-					MatiaCommand.this.onConsole((ConsoleCommandSender) sender, args);
-					return true;
+				try {
+					command(sender, args);
+				} catch (NoCatchException e) {
+					sender.sendMessage("§c"+e.getMessage());
 				}
-				if (!(sender instanceof Player)) return true;
-				MatiaCommand.this.onCommand((Player) sender, args);
 				return true;
 			}
 			@Override
 			public List<String> tabComplete(CommandSender sender, String alias, String[] args) {
-				if (!(sender instanceof Player)) return onTab(sender, args);
-				List<String> list = MatiaCommand.this.onTab((Player) sender, args);
-				if (list==null) list = (List<String>)ImmutableList.<String>of();
-				else if (list==players) return super.tabComplete(sender, alias, args);
-				return list;
+				Collection<String> cl = tab(sender, args);
+				if (cl==null) return (List<String>)ImmutableList.<String>of();
+				else if (cl==players) return super.tabComplete(sender, alias, args);
+				return cl.stream()
+					.filter(s -> s.toLowerCase().startsWith(args[args.length-1].toLowerCase()))
+					.collect(Collectors.toList());
 			}
 		};
 		NMS.server.registerCommand(cmd.contains(":")?cmd.split(":")[0]:"klapeks", bukkit);
 	}
 
-	public abstract void onCommand(Player p, String[] args);
-	public abstract List<String> onTab(Player p, String[] args);
+	public void command(CommandSender sender, String[] args) {
+		if (sender instanceof Player) {
+			onTab((Player) sender, args);
+			return;
+		}
+		sender.sendMessage("§cThis command only for players :(");
+	}
+	public Collection<String> tab(CommandSender sender, String[] args) {
+		if (!(sender instanceof Player)) return null;
+		return onTab((Player) sender, args);
+	}
 
-	public List<String> onTab(CommandSender ccs, String[] args) {
-		return (List<String>)ImmutableList.<String>of();
-	}
-	public void onConsole(CommandSender ccs, String[] args) {
-		ccs.sendMessage("§cSorry. This command only for players");
-	}
-	
-	public List<String> getAlias() {
-		return new ArrayList<>();
-	}
-	public String noPermissions() {
-		return "§cYou don't have perms";
-	}
-	public void noPermissions(Player p) {
-		p.sendMessage(noPermissions());
-	}
-	public String getUsage() {
-		return "§4[] §c/"+command;
+	public abstract void onCommand(Player p, String[] args);
+	public abstract Collection<String> onTab(Player p, String[] args);
+//
+//	public List<String> onTab(CommandSender ccs, String[] args) {
+//		return (List<String>)ImmutableList.<String>of();
+//	}
+//	public void onConsole(CommandSender ccs, String[] args) {
+//		ccs.sendMessage("§cSorry. This command only for players");
+//	}
+//	
+//	public String noPermissions() {
+//		return "§cYou don't have perms";
+//	}
+//	public void noPermissions(Player p) {
+//		p.sendMessage(noPermissions());
+//	}
+	public String getHelpUsage() {
+		return ">_<";
 	}
 	public String getDescription() {
 		return "Matia Command";
+	}
+	
+	public static void checkPerms(CommandSender sender, String perms) {
+		if (sender.hasPermission(perms)) return;
+		throw new NoPermsException(perms);
+	}
+
+	public static void checkUsage(boolean expression, String error) {
+		if (expression) return;
+		throw new NoCatchException(error);
 	}
 //	
 }
