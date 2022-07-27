@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.klapeks.sql.Database;
 import com.klapeks.sql.MatSQL;
+import com.klapeks.sql.MatYML;
 import com.klapeks.sql.Where;
 
 public class SQL {
@@ -48,6 +49,12 @@ public class SQL {
 		type = cfg.getString("type");
 		String url;
 		switch (type.toLowerCase()) {
+		case "yaml":
+		case "yml": {
+			url = "km:yaml://";
+			sql = new MatYML();
+			break;
+		}
 		case "mysql": {
 			try {
 				Class.forName("com.mysql.jdbc.Driver");
@@ -56,6 +63,7 @@ public class SQL {
 				throw new RuntimeException(e);
 			}
 			url = "jdbc:mysql://";
+			sql = new MatSQL();
 			break;
 		}
 		default: {
@@ -65,7 +73,6 @@ public class SQL {
 		url += cfg.get("host") + ":" + cfg.get("port")+"/";
 		url += cfg.get("name");
 		Bukkit.getLogger().info("Trying to connect to database with url " + url);
-		sql = new MatSQL();
 		sql.connect(url, cfg.getString("username"), cfg.getString("password"));
 	}
 	public static void disconnect() {
