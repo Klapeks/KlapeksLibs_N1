@@ -11,8 +11,6 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
-
 import com.klapeks.sql.DataType.SimpleDataType;
 import com.klapeks.sql.anno.Column;
 import com.klapeks.sql.anno.Primary;
@@ -146,10 +144,7 @@ public abstract class Database {
 		if (o instanceof List<?>) {
 			dt = getConverter(List.class);
 		}
-		if (dt == null) {
-			Bukkit.getLogger().warning("Can't find datatype of " + o.getClass());
-			return o;
-		}
+		if (dt == null) return o;
 		return dt.convertToDB(o);
 	}
 	/**
@@ -218,10 +213,8 @@ public abstract class Database {
 
 	public abstract <T> List<T> select(Class<T> table, Where where);
 	public <T> T selectOne(Class<T> table, Where where) {
-		System.out.println("Select one");
 		where.limit = 1;
 		List<T> list = select(table, where);
-		System.out.println(list);
 		if (list == null || list.isEmpty()) return null;
 		return list.get(0);
 	}

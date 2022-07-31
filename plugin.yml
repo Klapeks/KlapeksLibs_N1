@@ -1,5 +1,6 @@
 name: KlapeksLibs
 description: 'API for plugins by Klapeks'
+author: Klapeks
 main: com.klapeks.libs.bukkit.Main
 version: 1.0
 api-version: 1.13
