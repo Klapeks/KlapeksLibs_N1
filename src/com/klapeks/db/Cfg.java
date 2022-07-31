@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.klapeks.libs.Main;
+import com.klapeks.libs.bukkit.Main;
 
 public class Cfg {
 

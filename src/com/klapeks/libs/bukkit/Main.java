@@ -1,4 +1,4 @@
-package com.klapeks.libs;
+package com.klapeks.libs.bukkit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

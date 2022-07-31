@@ -47,7 +47,7 @@ public abstract class MatiaCommand {
 
 	public void command(CommandSender sender, String[] args) {
 		if (sender instanceof Player) {
-			onTab((Player) sender, args);
+			onCommand((Player) sender, args);
 			return;
 		}
 		sender.sendMessage("§cThis command only for players :(");

@@ -4,37 +4,37 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class PlayerArrayList implements Iterable<Player> {
-	private List<Player> players = new ArrayList<>();
+	private List<UUID> players = new ArrayList<>();
 	public boolean add(Player p) {
 		if (contains(p)) return false;
-		return players.add(p);
+		return players.add(p.getUniqueId());
 	}
 	public boolean contains(Player p) {
-		if (players.contains(p)) return true;
-		for (Player pl : players) {
-			if (pl.getName().equalsIgnoreCase(p.getName())) return true;
-		}
-		return false;
+		return players.contains(p.getUniqueId());
 	}
 	public boolean remove(Player p) {
-		if (players.remove(p)) return true;
-		//!is(p1,p)
-		Player[] pls = (Player[]) players.stream().filter(p1->!is(p1,p)).toArray();
-		players = new ArrayList<>(Arrays.asList(pls));
-		return true;
+		return players.remove(p.getUniqueId());
 	}
 	
 	@Override
 	public Iterator<Player> iterator() {
-		return players.iterator();
+		Iterator<UUID> it = players.iterator();
+		return new Iterator<Player>() {
+			@Override
+			public Player next() {
+				return Bukkit.getPlayer(it.next());
+			}
+			@Override
+			public boolean hasNext() {
+				return it.hasNext();
+			}
+		};
 	}
 	
-	private static boolean is(Player p1, Player p2) {
-		return p1.getUniqueId()==p2.getUniqueId() 
-			|| p1.getName().equalsIgnoreCase(p2.getName());
-	}
 }

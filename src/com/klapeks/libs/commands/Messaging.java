@@ -2,13 +2,13 @@ package com.klapeks.libs.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import com.klapeks.libs.MSG;
 
 public class Messaging {
 	static FileConfiguration cfg;
@@ -81,11 +81,8 @@ public class Messaging {
 		}
 		return sb.toString();
 	}
+	@SuppressWarnings("unchecked")
 	public static <T> List<T> listOf(T... str){
-		List<T> list = new ArrayList<>();
-		for (int i = 0; i < str.length; i++) {
-			list.add(str[i]);
-		}
-		return list;
+		return MSG.listOf(str);
 	}
 }
