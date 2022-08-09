@@ -9,6 +9,7 @@ import org.bukkit.command.defaults.BukkitCommand;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.ImmutableList;
+import com.klapeks.libs.MSG;
 import com.klapeks.libs.exceptions.NoCatchException;
 import com.klapeks.libs.exceptions.NoPermsException;
 import com.klapeks.libs.nms.NMS;
@@ -46,19 +47,16 @@ public abstract class MatiaCommand {
 	}
 
 	public void command(CommandSender sender, String[] args) {
-		if (sender instanceof Player) {
-			onCommand((Player) sender, args);
-			return;
-		}
-		sender.sendMessage("§cThis command only for players :(");
+		validPlayer(sender);
+		onCommand((Player) sender, args);
 	}
 	public Collection<String> tab(CommandSender sender, String[] args) {
 		if (!(sender instanceof Player)) return null;
 		return onTab((Player) sender, args);
 	}
 
-	public abstract void onCommand(Player p, String[] args);
-	public abstract Collection<String> onTab(Player p, String[] args);
+	public void onCommand(Player p, String[] args) {}
+	public Collection<String> onTab(Player p, String[] args){return null;}
 //
 //	public List<String> onTab(CommandSender ccs, String[] args) {
 //		return (List<String>)ImmutableList.<String>of();
@@ -80,14 +78,21 @@ public abstract class MatiaCommand {
 		return "Matia Command";
 	}
 	
-	public static void checkPerms(CommandSender sender, String perms) {
+	public static void validPerms(CommandSender sender, String perms) {
 		if (sender.hasPermission(perms)) return;
 		throw new NoPermsException(perms);
 	}
 
-	public static void checkUsage(boolean expression, String error) {
+	public static void validUsage(boolean expression, String error) {
 		if (expression) return;
 		throw new NoCatchException(error);
+	}
+	public static void validPlayer(Object object) {
+		if (object instanceof Player) return;
+		throw new NoCatchException("This command only for players :(");
+	}
+	protected static List<String> listOf(String... str){
+		return MSG.listOf(str);
 	}
 //	
 }

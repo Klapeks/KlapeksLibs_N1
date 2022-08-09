@@ -20,7 +20,7 @@ public class SQL {
 		return type;
 	}
 	public static boolean isSQLType() {
-		return true;
+		return sql instanceof MatSQL;
 	}
 	
 	public static Database sql() {

@@ -180,6 +180,7 @@ public abstract class Database {
 		properties.setProperty("user", username);
 		properties.setProperty("password", password);
 		properties.setProperty("characterEncoding", "utf8");
+		properties.setProperty("autoReconnect", "true");
 		connect(path, properties);
 	}
 	public abstract void disconnect();

@@ -28,4 +28,22 @@ public class MSG {
 		}
 		return list;
 	}
+
+	public static void broadcastPerms(String msg, String perms) {
+		Bukkit.getOnlinePlayers().forEach(p -> {
+			if (!p.hasPermission(perms)) return;
+			p.sendMessage(msg);
+		});
+//		Bukkit.getLogger().info(perms);
+		Bukkit.getConsoleSender().sendMessage(msg);
+	}
+
+	public static String join(String joining, Object... objs) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < objs.length; i++) {
+			if (i>0) sb.append(joining);
+			sb.append(objs[i]);
+		}
+		return sb.toString();
+	}
 }

@@ -14,7 +14,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import com.klapeks.db.Cfg;
+import com.klapeks.libs.MSG;
 import com.klapeks.libs.bukkit.Main;
 import com.klapeks.sql.anno.Column;
 import com.klapeks.sql.anno.IfYaml;
@@ -42,6 +42,7 @@ public class MatYML extends Database {
 
 	@Override
 	public boolean checkIfTableExists(Class<?> table) {
+		if (table == null) return false; 
 		return tables.containsKey(table);
 	}
 
@@ -155,6 +156,6 @@ public class MatYML extends Database {
 	}
 	
 	static String parseWhere(Where where) {
-		return Cfg.join(".", where.placeholders);
+		return MSG.join(".", where.placeholders);
 	}
 }
