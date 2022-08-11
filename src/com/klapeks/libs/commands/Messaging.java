@@ -2,13 +2,10 @@ package com.klapeks.libs.commands;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-
-import com.klapeks.libs.MSG;
 
 public class Messaging {
 	static FileConfiguration cfg;
@@ -81,8 +78,5 @@ public class Messaging {
 		}
 		return sb.toString();
 	}
-	@SuppressWarnings("unchecked")
-	public static <T> List<T> listOf(T... str){
-		return MSG.listOf(str);
-	}
+	
 }

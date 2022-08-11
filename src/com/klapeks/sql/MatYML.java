@@ -148,11 +148,11 @@ public class MatYML extends Database {
 	static File getTablePath(Class<?> table) {
 		Table t = validTable(table);
 		IfYaml yaml = table.getAnnotation(IfYaml.class);
-		if (yaml==null) return new File(Main.plugin.getDataFolder(), "db/"+t.value()+".yml");
+		if (yaml==null) return new File(Main.getPlugin().getDataFolder(), "db/"+t.value()+".yml");
 		String path = yaml.value();
 		if (!path.endsWith(".yml")) path+=".yml";
 		if (path.startsWith("~")) return new File(path.substring(1));
-		return new File(Main.plugin.getDataFolder(), "db/"+path);
+		return new File(Main.getPlugin().getDataFolder(), "db/"+path);
 	}
 	
 	static String parseWhere(Where where) {

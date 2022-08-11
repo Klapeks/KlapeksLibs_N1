@@ -10,7 +10,7 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.klapeks.libs.commands.Messaging;
-import com.klapeks.libs.inv.CustomInventory;
+import com.klapeks.libs.gui.CustomInventory;
 import com.klapeks.libs.nms.NMS;
 
 public class Main extends JavaPlugin implements Listener {
@@ -18,6 +18,9 @@ public class Main extends JavaPlugin implements Listener {
 	public static Main plugin;
 	public Main() {
 		plugin = this;
+	}
+	public static Main getPlugin() {
+		return plugin;
 	}
 	@Override
 	public void onEnable() {

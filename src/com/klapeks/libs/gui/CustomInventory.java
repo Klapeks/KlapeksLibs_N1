@@ -1,4 +1,4 @@
-package com.klapeks.libs.inv;
+package com.klapeks.libs.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
